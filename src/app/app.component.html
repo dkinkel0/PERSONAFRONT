@@ -1,11 +1,48 @@
 <!-- <h1>>Hola mundo!</h1> -->
-<form [formGroup]="personaForm" (ngSubmit)="guardar()">
-  <div class="form-group"></div>
-  <label for="">Nombre</label>
 
-  <input type="text" id="nombre" formControlName="nombre" required class="form-control">
+<!-- 4 - Plantilla:
+Se utiliza formGroup para enlazar el formulario y formControlName para enlazar los controles.
+Se muestran mensajes de error si los controles son inválidos y han sido tocados. -->
+<div class="formularioRegistro">
+  <h2>Crear persona</h2>
+  <form [formGroup]="personaForm" (ngSubmit)="guardar()">
 
-</form>
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" formControlName="nombre" class="form-control">
+    </div>
+
+    <div class="form-group">
+      <label>Apellido</label>
+      <input type="text" formControlName="apellido" class="form-control">
+    </div>
+
+    <div class="form-group">
+      <label>Edad</label>
+      <input type="number" formControlName="edad" class="form-control">
+    </div>
+
+    <div class="form-group">
+      <label>Pais</label>
+      <!-- <input type="text" formControlName="pais" class="form-control"> -->
+      <select name="pais" id="pais" formControlName="pais" class="form-control">
+        <!-- <option value="item.id" *ngFor="let item of paises"></option> -->
+         <!-- uso este segundo ejemplo -->
+         <option *ngFor="let item of paises" [value]="item.id" >{{item.nombre}}</option>
+      </select>
+    </div>
+
+    <button type="submit" [disabled]="!personaForm.valid" class="btn btn-primary">Guardar</button>
+    <!-- <button type="button" class="btn btn-primary">Primary</button>  esta es una opcion de boton primario de bootstrap -->
+
+  </form>
+</div>
+
 
 
 <router-outlet />
+
+
+
+
+<!-- 5 - Método onSubmit: Se ejecuta cuando el formulario se envía. Verifica si el formulario es válido y, si lo es, imprime los valores en la consola. -->
