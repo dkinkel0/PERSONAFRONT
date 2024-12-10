@@ -25,10 +25,20 @@ Se muestran mensajes de error si los controles son inválidos y han sido tocados
     <div class="form-group">
       <label>Pais</label>
       <!-- <input type="text" formControlName="pais" class="form-control"> -->
-      <select name="pais" id="pais" formControlName="pais" class="form-control">
+      <select name="pais" id="pais" formControlName="pais" class="form-control" (change)="cargarEstadosPorPais($event)">
         <!-- <option value="item.id" *ngFor="let item of paises"></option> -->
          <!-- uso este segundo ejemplo -->
-         <option *ngFor="let item of paises" [value]="item.id" >{{item.nombre}}</option>
+         <option *ngFor="let item of paises$ | async" [value]="item.id" >{{item.nombre}}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Estado o region</label>
+      <!-- <input type="text" formControlName="pais" class="form-control"> -->
+      <select name="estado" id="estado" formControlName="estado" class="form-control">
+        <!-- <option value="item.id" *ngFor="let item of paises"></option> -->
+         <!-- uso este segundo ejemplo -->
+         <option *ngFor="let item of estados$ | async" [value]="item.id" >{{item.nombre}}</option>
       </select>
     </div>
 
