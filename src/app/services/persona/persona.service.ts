@@ -17,6 +17,8 @@ export class PersonaService {
   }
 
   public savePersona (persona: any): Observable<any> {
+
+    console.log("savePersona");
     return this.httpClient.post(this.API_SERVER, persona);
     //                              url           body
   }

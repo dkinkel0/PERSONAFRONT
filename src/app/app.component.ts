@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 // "Component: decorador para agregar funcionalidad a la clase
 // OnInit: inicia ciclo de vida del componente
 import { RouterOutlet } from '@angular/router'; // Permite la navegación entre diferentes componentes.
@@ -21,6 +21,7 @@ import { CommonModule } from '@angular/common'; // se importa aca y uso en html 
 // ngClass: Permite agregar o quitar clases CSS dinámicamente.
 // ngStyle: Permite aplicar estilos en línea de manera dinámica.
 import { Observable } from 'rxjs';
+import { error } from 'node:console';
 
 
 @Component({
@@ -40,6 +41,8 @@ export class AppComponent implements OnInit {
   personaForm!: FormGroup;   // Formulario reactivo
   // "!:" --> afirmación no nula:  indicando que personaForm se inicializará en el método ngOnInit antes de ser utilizado.
   // paises: any; 
+
+
   paises$: Observable<any> | undefined; //el signo peso es una convension para saber qeu es Observable
   // Observable es una variable asincronica
   // estados: any; 
@@ -47,7 +50,8 @@ export class AppComponent implements OnInit {
   // personaForm: Declaras el formulario que contendrá los datos de la persona.
   // paises y estados: Variables para almacenar los datos obtenidos de los servicios.
 
-  
+  // personaService:PersonaService = inject(PersonaService); 
+  //otra forma de lamar al servicio
 
   constructor(
     // 2 - Inyección: FormBuilder se inyecta en el constructor del componente.
@@ -65,7 +69,7 @@ export class AppComponent implements OnInit {
   // Se aplican validaciones a los 5 controles.
   ngOnInit(): void {  //ngOnInit se usa para inicializar el componente (la siglas ng es de Angular, saltea la A y se queda con las siguien dos letras "ng")
     this.personaForm = this.fb.group({
-      nombre: ['', Validators.required],
+      nombre: ['', Validators.required],   //// Control 'nombre'
       apellido: ['', Validators.required],
       edad: ['', Validators.required],
       pais: ['', Validators.required],
@@ -87,8 +91,9 @@ export class AppComponent implements OnInit {
     //     console.error(err); 
     //   });
     this.paises$ = this.paisesService.getAllPaises(); // Obtención de Países: Llamas al servicio para obtener la lista de países y la almacenas en observable.
+
     
-     // Esta prueba queda para despues, ahora sigo con el Observable
+    // Esta prueba queda para despues, ahora sigo con el Observable
     //  this.personaForm.get('pais').valueChanges.subscribe(
     //   value=>{
     //     this.estadosService.getAllEstadosByPaises(value.id).subscribe(
@@ -98,22 +103,103 @@ export class AppComponent implements OnInit {
     //       })}
     //        )
 
-  // cargarEstadosPorPais(event: any ){
-    
-  //   this.estados$ = this.estadosService.getAllEstadosByPaises(event.target.value)
-    
+    // cargarEstadosPorPais(event: any ){
+
+    //   this.estados$ = this.estadosService.getAllEstadosByPaises(event.target.value)
+
+    // }
+
+  }
+  guardar(): void {
+    console.log("paso");
+    // this.personaService.savePersona(this.personaForm.value);
+    console.log("nombre capturado: " + this.personaForm.value.name);
+    console.log("form: " + JSON.stringify(this.personaForm.value));
+
+    console.log("con get: " + this.personaForm.get('nombre')?.value);
+
+    const json = JSON.stringify(this.personaForm.value);
+
+    console.log("json: " + json);
+
+    const Ramon = {
+
+      "nombre": this.personaForm.get('nombre')?.value, // el signo de interrogacion es para que espere a tener un valor para calcular el .value 
+      "apellido": this.personaForm.get('apellido')?.value,  // evitando el error (null.value)
+      "edad": parseInt(this.personaForm.get('edad')?.value),
+      "pais": {
+        "id": parseInt(this.personaForm.get('pais')?.value)
+      },
+      "estado": {
+        "id": parseInt(this.personaForm.get('estado')?.value)
+      }
+    }
+
+
+
+    // try {
+    //   const resp = this.personaService.savePersona(Ramon);
+    //   console.log('Persona guardada:', resp);
+    // } catch (error) {
+    //   console.error('Error al guardar la persona:', error);
+    // }
+
+
+
+    this.personaService.savePersona(Ramon).subscribe({
+      next: (response) => {
+        console.log('Persona guardada:', response);
+      },
+      error: (error) => {
+        alert('There was an error in retrieving data from the server');
+      }
+    });
+
+
+
+
+    // this.personaService.savePersona(Ramon).subscribe(resp => {
+    //   console.log(resp);
+    // },
+    //   error => { console.error(error) }
+
+    // );  
+
+    // pasar persona directamente
+
+    // const Ramon = {
+    //   "nombre": "Ramon",
+    //   "apellido": "Dilay",
+    //   "edad": 65,
+    //   "pais": {
+    //     "id": 5
+    //   },
+    //   "estado": {
+    //     "id": 1838
+    //   }
+    // }
+    // this.personaService.savePersona(Ramon)  
+  }
+
+
+
+  // guardar(): void {
+  //   this.personaService.savePersona(this.personaForm.value).subscribe(resp => {
+  //     this.personaForm.reset();
+  //     this.personaForm.setErrors(null);
+  //     this.personas=this.personas.filter(persona=> resp.id!==persona.id);
+  //     this.personas.push(resp);
+  //     this.setDataAndPagination();
+  //   },
+  //     error => { console.error(error) }
+  //   )
   // }
 
-  }
-  guardar(): void { 
-    this.personaService.savePersona(this.personaForm)    
-  }
 
-  
+
+ 
   //AGREGAR EXPLICACION
-  cargarEstadosPorPais(event: any ){
-        this.estados$ = this.estadosService.getAllEstadosByPaises(event.target.value)
+  cargarEstadosPorPais(event: any) {
+    this.estados$ = this.estadosService.getAllEstadosByPaises(event.target.value)
   }
- 
 }
- 
