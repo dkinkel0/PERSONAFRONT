@@ -53,6 +53,8 @@ export class AppComponent implements OnInit {
   // personaService:PersonaService = inject(PersonaService); 
   //otra forma de lamar al servicio
 
+  personas: any[] = []; // Lista para almacenar las personas obtenidas del servicio.
+
   constructor(
     // 2 - Inyección: FormBuilder se inyecta en el constructor del componente.
     public fb: FormBuilder,
@@ -79,20 +81,10 @@ export class AppComponent implements OnInit {
     // Inicialización del Formulario: Creas un FormGroup con validaciones para cada campo.
     // Obtención de Países: Llamas al servicio para obtener la lista de países y la almacenas en paises.
 
-
-
-    // AGREGAR EXPLICACION
-    // this.paisesService.getAllPaises().subscribe(
-    //   resp => {
-    //   this.paises = resp;
-    //   console.log(resp);
-    // }, 
-    //   err => { 
-    //     console.error(err); 
-    //   });
+   
     this.paises$ = this.paisesService.getAllPaises(); // Obtención de Países: Llamas al servicio para obtener la lista de países y la almacenas en observable.
 
-    
+
     // Esta prueba queda para despues, ahora sigo con el Observable
     //  this.personaForm.get('pais').valueChanges.subscribe(
     //   value=>{
@@ -109,17 +101,26 @@ export class AppComponent implements OnInit {
 
     // }
 
+    this.personaService.getAllPersonas().subscribe({
+      next: (response) => {
+        console.log('Agregar persona a personas:', response);
+        this.personas = response;
+      },
+      error: (error) => {
+        alert('There was an error in retrieving data from the server');
+      }
+    })
+
   }
+
   guardar(): void {
+
     console.log("paso");
     // this.personaService.savePersona(this.personaForm.value);
     console.log("nombre capturado: " + this.personaForm.value.name);
     console.log("form: " + JSON.stringify(this.personaForm.value));
-
     console.log("con get: " + this.personaForm.get('nombre')?.value);
-
     const json = JSON.stringify(this.personaForm.value);
-
     console.log("json: " + json);
 
     const Ramon = {
@@ -136,68 +137,32 @@ export class AppComponent implements OnInit {
     }
 
 
-
-    // try {
-    //   const resp = this.personaService.savePersona(Ramon);
-    //   console.log('Persona guardada:', resp);
-    // } catch (error) {
-    //   console.error('Error al guardar la persona:', error);
-    // }
-
-
-
     this.personaService.savePersona(Ramon).subscribe({
       next: (response) => {
-        console.log('Persona guardada:', response);
+        console.log('Persona guardada con savePersona:', response);
+        this.personaForm.reset();
+        this.personas.push(Ramon);
       },
       error: (error) => {
         alert('There was an error in retrieving data from the server');
       }
     });
-
-
-
-
-    // this.personaService.savePersona(Ramon).subscribe(resp => {
-    //   console.log(resp);
-    // },
-    //   error => { console.error(error) }
-
-    // );  
-
-    // pasar persona directamente
-
-    // const Ramon = {
-    //   "nombre": "Ramon",
-    //   "apellido": "Dilay",
-    //   "edad": 65,
-    //   "pais": {
-    //     "id": 5
-    //   },
-    //   "estado": {
-    //     "id": 1838
-    //   }
-    // }
-    // this.personaService.savePersona(Ramon)  
   }
 
+  eliminar(persona: any): void {
+    if (confirm(`¿Estás seguro de eliminar a ${persona.nombre} ${persona.apellido}?`)) {
+      this.personaService.deletePersona(persona.id).subscribe({
+        next: (response) => {
+          console.log('Persona eliminada con deletePersona:', response);
+          this.personas = this.personas.filter((p) => p.id!== persona.id);
+        },
+        error: (error) => {
+          alert('There was an error in retrieving data from the server');
+        }
+      });
+    }
+  }
 
-
-  // guardar(): void {
-  //   this.personaService.savePersona(this.personaForm.value).subscribe(resp => {
-  //     this.personaForm.reset();
-  //     this.personaForm.setErrors(null);
-  //     this.personas=this.personas.filter(persona=> resp.id!==persona.id);
-  //     this.personas.push(resp);
-  //     this.setDataAndPagination();
-  //   },
-  //     error => { console.error(error) }
-  //   )
-  // }
-
-
-
- 
   //AGREGAR EXPLICACION
   cargarEstadosPorPais(event: any) {
     this.estados$ = this.estadosService.getAllEstadosByPaises(event.target.value)

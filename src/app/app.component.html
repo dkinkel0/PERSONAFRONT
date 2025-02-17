@@ -11,14 +11,14 @@ Se muestran mensajes de error si los controles son inválidos y han sido tocados
 
     <div class="form-group">
       <label>Nombre</label>
-      <input type="text" formControlName="nombre" class="form-control" >
+      <input type="text" formControlName="nombre" class="form-control">
     </div>
     <!-- formControlName="nombre"  va a buscar fuera del div, se encuentra con el formulario
       y ahi esta definido a que grupo pertenece la propiedad "nombre" -->
 
     <div class="form-group">
       <label>Apellido</label>
-      <input type="text" formControlName="apellido" class="form-control" >
+      <input type="text" formControlName="apellido" class="form-control">
     </div>
 
     <div class="form-group">
@@ -30,7 +30,7 @@ Se muestran mensajes de error si los controles son inválidos y han sido tocados
       <label>Pais</label>
       <!-- <input type="text" formControlName="pais" class="form-control"> -->
       <select name="pais" id="pais" formControlName="pais" class="form-control" (change)="cargarEstadosPorPais($event)">
-      <!--select menu desplegable
+        <!--select menu desplegable
              name: este atributo establece el nombre del campo
              id: este atributo establece un identificador unico dentro del documento
              formControlName: este atributo establece el nombre del control (FormGroup) asociado con este elemento
@@ -48,7 +48,7 @@ Se muestran mensajes de error si los controles son inválidos y han sido tocados
               
              *ngFor="let item of paises$ | async" esta es una forma de usar async pipe en Angular para iterar sobre observables y arrays asincronos.
              El async pipe se encarga de manejar el observable y actualizar la vista cuando cambia.
-             En este caso, estamos iterando sobre paises$ (observable de paises) y mostrando el nombre del pais seleccionado -->       
+             En este caso, estamos iterando sobre paises$ (observable de paises) y mostrando el nombre del pais seleccionado -->
 
       </select>
     </div>
@@ -68,14 +68,52 @@ Se muestran mensajes de error si los controles son inválidos y han sido tocados
 
   </form>
 </div>
-
-{{personaForm.value | json }}
-<!-- de esta forma obetenemos los valores de personaForm para ver en pantalla -->
-<br />
-<p>nombre</p>
-{{personaForm.get('nombre')?.value}}
-<!-- de esta manera usando el metodo ya proporcionado podemos acceder al valor de la propiedad "nombre".
+<div class="formularioRegistro">
+  {{personaForm.value | json }}
+  <!-- de esta forma obetenemos los valores de personaForm para ver en pantalla -->
+  <br />
+  <p>nombre</p>
+  {{personaForm.get('nombre')?.value}}
+  <!-- de esta manera usando el metodo ya proporcionado podemos acceder al valor de la propiedad "nombre".
     El signo de interrogacion es para decirle que puede aceptar un valor nulo -->
+
+</div>
+
+
+<div class="formularioRegistro">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Edad</th>
+        <th>Pais</th>
+        <th>Estado</th>
+        <th>Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of personas">
+        <td>{{ item.id }}</td>
+        <td>{{ item.nombre }}</td>
+        <td>{{ item.apellido }}</td>
+        <td>{{ item.edad }}</td>
+        <td>{{ item.pais?.nombre }}</td>
+        <td>{{ item.estado?.nombre }}</td>
+        <td>
+          <button type="button" class="btn btn-success">Editar</button>
+          <button type="button" class="btn btn-danger" (click)="eliminar(item)" >Eliminar</button>
+
+        </td>
+      </tr>
+    </tbody>
+
+  </table>
+
+</div>
+
+
 
 <router-outlet />
 

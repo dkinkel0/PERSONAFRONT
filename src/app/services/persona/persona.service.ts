@@ -12,7 +12,7 @@ export class PersonaService {
     private httpClient: HttpClient
   ) { }
 
-  public geetAllPersonas(): Observable<any> {
+  public getAllPersonas(): Observable<any> {
     return this.httpClient.get(this.API_SERVER);
   }
 
@@ -22,4 +22,9 @@ export class PersonaService {
     return this.httpClient.post(this.API_SERVER, persona);
     //                              url           body
   }
+
+  public deletePersona (id: number): Observable<any> {
+    return this.httpClient.delete(this.API_SERVER+"delete/"+id);
+  }
+
 }
